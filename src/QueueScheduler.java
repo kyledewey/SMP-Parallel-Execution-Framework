@@ -37,11 +37,8 @@ public class QueueScheduler< T > extends Scheduler< T >{
      * @param requester The requester
      * @return The item for the given requester.  Returns null if we are out of
      * items for the given requester.
-     * @throws UnknownRequesterException If the requester isn't recognized
      */
-    public T nextItem( int requester ) 
-	throws UnknownRequesterException {
-	validateRequester( requester );
+    public T nextItemWithoutValidation( int requester ) {
 	return queue.poll();
     }
 }

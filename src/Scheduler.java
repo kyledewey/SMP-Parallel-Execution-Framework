@@ -67,12 +67,24 @@ public abstract class Scheduler< T > {
     }
 
     /**
-     * Gets the next item for the given requester.
+     * Gets the next item for the given requester, validating that the 
+     * requester exists.
      * @param requester The requester
      * @return The item for the given requester.  Returns null if we are out of
      * items for the given requester.
      * @throws UnknownRequesterException If the requester isn't recognized
      */
-    public abstract T nextItem( int requester ) 
-	throws UnknownRequesterException;
+    public T nextItem( int requester ) throws UnknownRequesterException {
+	validateRequester( requester );
+	return nextItemWithoutValidation( requester );
+    }
+
+    /**
+     * Gets the next item for the given requester.
+     * @param requester The requester
+     * @return The item for the given requester.  Returns null if we are out of
+     * items for the given requester.
+     */
+    public abstract T nextItemWithoutValidation( int requester );
+
 }
