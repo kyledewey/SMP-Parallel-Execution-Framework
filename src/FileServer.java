@@ -62,9 +62,15 @@ public class FileServer {
 	files.addAll( inFlight );
     }
 
-    public synchronized void checkDone() throws IOException {
+    public synchronized void checkDone() {
 	if ( isDone() ) {
-	    server.close(); // makes server throw a SocketException to interrupt mainLoop
+	    try {
+		// makes server throw a SocketException to interrupt mainLoop
+		server.close();
+	    } catch ( IOException e ) {
+		e.printStackTrace();
+		System.err.println( "Error on closing the file server." );
+	    }
 	}
     }
 

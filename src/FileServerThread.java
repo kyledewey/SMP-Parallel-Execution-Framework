@@ -48,12 +48,20 @@ public class FileServerThread extends Thread {
     // process it, get the output result from the client, and
     // repeat.
     public void run() {
+	boolean error = false;
 	try {
 	    handshake();
+	} catch ( BadClientException e ) {
+	    e.printStackTrace();
+	    System.err.println( "Bad handshake from client." );
+	    error = true;
 	} catch ( IOException e ) {
 	    e.printStackTrace();
-	    System.err.println( e );
-	    return;
+	    System.err.println( "Connection error on client handshake attempt." );
+	    error = true;
+	} finally {
+	    if ( error ) 
+		return;
 	}
 
 	while ( !shouldTerminate ) {
@@ -61,12 +69,11 @@ public class FileServerThread extends Thread {
 		sendFileOrNoMoreFiles( server.nextFile() );
 	    } catch ( IOException e ) {
 		e.printStackTrace();
-		System.err.println( e );
+		System.err.println( "Error occurred in file transmission." );
+		shouldTerminate = true; // protocol is to reconnect on error
 	    }
 	}
 
-	try {
-	    server.checkDone();
-	} catch ( IOException e ) {}
+	server.checkDone();
     }
 }
