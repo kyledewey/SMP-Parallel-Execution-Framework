@@ -83,8 +83,10 @@ public class FileTransfer {
     }
 
     public static File makeTempFile() throws IOException {
-	return File.createTempFile( TEMP_FILE_PREFIX,
-				    TEMP_FILE_POSTFIX );
+	File retval = File.createTempFile( TEMP_FILE_PREFIX,
+					   TEMP_FILE_POSTFIX );
+	retval.deleteOnExit();
+	return retval;
     }
 
     public void getAndSaveFile( File destination ) throws IOException {
