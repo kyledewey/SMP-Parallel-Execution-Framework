@@ -21,9 +21,12 @@ public class FileServer {
     private final Set< String > inFlight;
     private final Set< String > complete;
     private final ServerSocket server;
+    private final ToOutputFile toOutputFile;
     // end instance variables
 
-    public FileServer( Collection< String > toProcess ) throws IOException {
+    public FileServer( Collection< String > toProcess,
+		       ToOutputFile toOutputFile ) throws IOException {
+	this.toOutputFile = toOutputFile;
 	files = new ConcurrentLinkedQueue< String >( toProcess );
 	inFlight = Collections.synchronizedSet( new HashSet< String >() ); 
 	complete = Collections.synchronizedSet( new HashSet< String >() );
@@ -39,7 +42,9 @@ public class FileServer {
     }
 	    
     public void accept() throws IOException {
-	new FileServerThread( this, server.accept() ).start();
+	new FileServerThread( this, 
+			      server.accept(),
+			      toOutputFile ).start();
     }
 
     // if we don't have any files left, it only means that
@@ -99,8 +104,15 @@ public class FileServer {
 	return retval;
     }
 
+    // takes one optional parameter: "temp" to make temporary output
+    // files. Useful for debugging
     public static void main( String[] args ) throws IOException {
-	new FileServer( Arrays.asList( args ) ).mainLoop();
+	ToOutputFile toOutputFile =
+	    ( args.length == 1 && args[ 0 ].equals( "temp" ) ) ?
+	    new MakeTempFile() :
+	    new MakePostfixFile();
+	new FileServer( Arrays.asList( args ),
+			toOutputFile ).mainLoop();
     }
 }
 

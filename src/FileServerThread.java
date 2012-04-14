@@ -12,10 +12,14 @@ public class FileServerThread extends Thread {
     private final FileServer server;
     private final Socket client;
     private final FileTransfer transfer;
+    private final ToOutputFile toOutputFile;
     private boolean shouldTerminate = false;
     // end instance variables
 
-    public FileServerThread( FileServer server, Socket client ) throws IOException {
+    public FileServerThread( FileServer server, 
+			     Socket client,
+			     ToOutputFile toOutputFile ) throws IOException {
+	this.toOutputFile = toOutputFile;
 	this.server = server;
 	this.client = client;
 	transfer = new FileTransfer( client.getInputStream(),
@@ -34,9 +38,8 @@ public class FileServerThread extends Thread {
 	    shouldTerminate = true;
 	} else {
 	    transfer.sendFile( fm );
-	    File temp = FileTransfer.makeTempFile();
-	    System.out.println( "SERVER TEMP: " + temp.getPath() );
-	    transfer.getAndSaveFile( temp );
+	    File output = toOutputFile.getOutputFile( new File( fm ) );
+	    transfer.getAndSaveFile( output );
 	    server.fileComplete( fm );
 	}
     }
