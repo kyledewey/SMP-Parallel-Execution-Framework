@@ -47,9 +47,9 @@ public class FileServer {
 	} catch ( SocketException e ) {
 	    // we are terminating - this is normal
 	} catch ( IOException e ) {
-	    // client failed to connect after starting connection, for
-	    // whatever reason
 	    e.printStackTrace();
+	    System.err.println( "Client failed to finish making the initial " +
+				"connection." );
 	}
     }
 
@@ -112,13 +112,18 @@ public class FileServer {
 
     // takes one optional parameter: "temp" to make temporary output
     // files. Useful for debugging
-    public static void main( String[] args ) throws IOException {
+    public static void main( String[] args ) {
 	ToOutputFile toOutputFile =
 	    ( args.length == 1 && args[ 0 ].equals( "temp" ) ) ?
 	    new MakeTempFile() :
 	    new MakePostfixFile();
-	new FileServer( Arrays.asList( args ),
-			toOutputFile ).mainLoop();
+	try {
+	    new FileServer( Arrays.asList( args ),
+			    toOutputFile ).mainLoop();
+	} catch ( IOException e ) {
+	    e.printStackTrace();
+	    System.err.println( "Couldn't start up server." );
+	}
     }
 }
 
