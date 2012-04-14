@@ -34,18 +34,23 @@ public class FileServer {
     }
 
     public void mainLoop() {
-	while( true ) {
-	    accept();
+	try {
+	    while( true ) {
+		accept();
+	    }
+	} catch ( SocketException e ) {
+	    // terminating
 	}
     }
 	    
-    public void accept() {
+    public void accept() throws SocketException {
 	try {
 	    new FileServerThread( this, 
 				  server.accept(),
 				  toOutputFile ).start();
 	} catch ( SocketException e ) {
 	    // we are terminating - this is normal
+	    throw e;
 	} catch ( IOException e ) {
 	    e.printStackTrace();
 	    System.err.println( "Client failed to finish making the initial " +

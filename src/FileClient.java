@@ -13,10 +13,12 @@ public class FileClient {
     public final FileTransfer transfer;
     private boolean done = false;
     private String lastFileName = null;
+    public final String hostname;
     // end instance variables
 
-    public FileClient( String serverName ) throws IOException {
-	server = new Socket( serverName, FileServer.DEFAULT_PORT );
+    public FileClient( String hostname ) throws IOException {
+	this.hostname = hostname;
+	server = new Socket( hostname, FileServer.DEFAULT_PORT );
 	transfer = new FileTransfer( server.getInputStream(),
 				     server.getOutputStream() );
 	handshake();
