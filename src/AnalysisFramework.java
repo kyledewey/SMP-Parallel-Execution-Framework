@@ -59,9 +59,13 @@ public class AnalysisFramework< T > {
      */
     public AnalysisFramework( List< T > items,
 			      AnalyzerFactory< T > analyzerFactory ) {
-	this( Runtime.getRuntime().availableProcessors(),
+	this( availableProcessors(),
 	      items,
 	      analyzerFactory );
+    }
+
+    public static int availableProcessors() {
+	return Runtime.getRuntime().availableProcessors();
     }
 
     /**
