@@ -4,11 +4,11 @@ for parallel console commands scheduled in a queue, where the number of
 tasks running in parallel is equal to the number of available cores.
 
 INSTALLATION:
-mkdir -p parallel/smp
 make
 
 USAGE:
-FileAnalysisFramework works like so:
+FileAnalysisFramework works like so (executed from the same directory where
+everything was made):
 java parallel.smp.FileAnalysisFramework "command that takes a file name" files-to-process
 
 ...for example:
