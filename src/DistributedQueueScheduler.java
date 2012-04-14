@@ -6,9 +6,9 @@ import java.util.*;
 import java.io.*;
 
 public class DistributedQueueScheduler extends Scheduler< File > {
-    public DistributedQueueScheduler( int numRequesters,
-				      List< File > items ) throws IOException {
-	super( numRequesters, items );
+    public DistributedQueueScheduler( int numRequesters ) throws IOException {
+	// pass a dummy list of files; these aren't used by anything distributed
+	super( numRequesters, new ArrayList< File >() );
     }
 
     // returns a file to analyze

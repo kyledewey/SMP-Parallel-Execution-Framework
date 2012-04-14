@@ -1,32 +1,30 @@
 package parallel.cluster;
 
-import java.util.*;
 import java.io.*;
+import java.util.ArrayList;
 
 import parallel.smp.*;
 
 public class DistributedFileAnalysisFramework extends AnalysisFramework< File > {
     public DistributedFileAnalysisFramework( int numThreads,
 					     String command,
-					     List< File > files,
 					     String hostname ) {
 	super( numThreads,
-	       files,
+	       new ArrayList< File >(), // dummy variable
 	       new DistributedQueueSchedulerFactory(),
 	       new DistributedExternalCommandFactory( command, hostname ) );
     }
 
-    // takes the hostname, the command to run, and the files to process
+    // takes the hostname and the command to run
     public static void main( String[] args ) {
-	if ( args.length < 3 ) {
-	    System.err.println( "Needs a hostname, a command to run, and the files to process." );
+	if ( args.length != 2 ) {
+	    System.err.println( "Needs a hostname and a command to run." );
 	    System.exit( 1 );
 	}
 
 	DistributedFileAnalysisFramework framework =
 	    new DistributedFileAnalysisFramework( AnalysisFramework.availableProcessors(),
 						  args[ 1 ],
-						  FileAnalysisFramework.stringsToFiles( Arrays.asList( args ), 2 ),
 						  args[ 0 ] );
 	framework.doAnalysis();
     }
