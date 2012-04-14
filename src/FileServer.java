@@ -33,18 +33,24 @@ public class FileServer {
 	server = new ServerSocket( DEFAULT_PORT );
     }
 
-    public void mainLoop() throws IOException {
-	try {
-	    while( true ) {
-		accept();
-	    }
-	} catch ( SocketException e ) {}
+    public void mainLoop() {
+	while( true ) {
+	    accept();
+	}
     }
 	    
-    public void accept() throws IOException {
-	new FileServerThread( this, 
-			      server.accept(),
-			      toOutputFile ).start();
+    public void accept() {
+	try {
+	    new FileServerThread( this, 
+				  server.accept(),
+				  toOutputFile ).start();
+	} catch ( SocketException e ) {
+	    // we are terminating - this is normal
+	} catch ( IOException e ) {
+	    // client failed to connect after starting connection, for
+	    // whatever reason
+	    e.printStackTrace();
+	}
     }
 
     // if we don't have any files left, it only means that
