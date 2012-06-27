@@ -9,7 +9,7 @@ make
 SMP USAGE:
 FileAnalysisFramework works like so (executed from the same directory where
 everything was made):
-java parallel.smp.FileAnalysisFramework "command that takes a file name" files-to-process
+java parallel.smp.FileAnalysisFramework [-cores #cores to use] "command that takes a file name" files-to-process
 
 ...for example:
 java parallel.smp.FileAnalysisFramework "./foo" file1.txt file2.txt file3.txt
@@ -21,7 +21,8 @@ The above command like will execute:
 
 These will be executed in parallel where possible (due to limitations of the
 number of cores). Since output isn't captured, all output must be done to
-files. 
+files. More specifically, -cores specifies the number of threads to use, which
+defaults to the number of cores available.
 
 The default queue scheduler doesn't provide any guarentees regarding execution
 order. While it is true that file N must be selected for processing before
