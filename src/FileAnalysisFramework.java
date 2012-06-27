@@ -32,14 +32,16 @@ public class FileAnalysisFramework extends AnalysisFramework< File > {
     }
 
     /**
-     * Creates an analysis factory using the maximum available number 
+     * Creates an analysis factory using the given number 
      * of threads with the given command and files.
      * @param command The command to use
      * @param files The files to use
      */
-    public FileAnalysisFramework( String command,
+    public FileAnalysisFramework( int numThreads,
+				  String command,
 				  List< File > files ) {
-	super( files,
+	super( numThreads, 
+	       files,
 	       new ExternalCommandFactory( command ) );
     }
 
@@ -59,21 +61,65 @@ public class FileAnalysisFramework extends AnalysisFramework< File > {
 	return retval;
     }
 
+    public static void usage() {
+	System.err.println( "Usage: java parallel.smp.FileAnalysisFramework [-cores #cores] filenames" );
+	System.err.println( "Defaults to the total available number of cores." );
+    }
+
+    public static boolean hasCores( String[] args ) {
+	return args.length >= 2 && args[ 0 ].equals( "-cores" );
+    }
+
+    public static int numCores( String[] args ) throws NumberFormatException {
+	int retval;
+
+	if ( hasCores( args ) ) {
+	    retval = Integer.parseInt( args[ 1 ] );
+	    if ( retval <= 0 ) {
+		throw new NumberFormatException( "Needs a non-negative number of cores" );
+	    }
+	} else {
+	    retval = AnalysisFramework.availableProcessors();
+	}
+
+	return retval;
+    }
+
+    public static String getCommand( String[] args ) {
+	return ( hasCores( args ) ) ? args[ 2 ] : args[ 0 ];
+    }
+
+    public static List< File > getFiles( String[] args ) {
+	List< String > fileNames = Arrays.asList( args );
+	int index = ( hasCores( args ) ) ? 3 : 1;
+	return stringsToFiles( fileNames, index );
+    }
+
+    public static boolean paramsValid( String[] args ) {
+	boolean hasCores = hasCores( args );
+	return ( ( hasCores && args.length > 3 ) || 
+		 ( !hasCores && args.length > 1 ) );
+    }
+
     /**
      * The main function.
      * @param args Command line arguments.  The first is the command to run,
      * and the second is all the files.
      */
     public static void main( String[] args ) {
-	if ( args.length < 2 ) {
-	    System.err.println( "Needs a command and one or more file names." );
+	if ( !paramsValid( args ) ) {
+	    usage();
 	    System.exit( 1 );
 	}
 
-	List< String > fileNames = Arrays.asList( args );
-	FileAnalysisFramework framework = 
-	    new FileAnalysisFramework( args[ 0 ],
-				       stringsToFiles( fileNames, 1 ) );
-	framework.doAnalysis();
+	try {
+	    FileAnalysisFramework framework = 
+		new FileAnalysisFramework( numCores( args ),
+					   getCommand( args ),
+					   getFiles( args ) );
+	    framework.doAnalysis();
+	} catch ( NumberFormatException e ) {
+	    System.err.println( "The number of cores must be an integer > 0" );
+	}
     }
 }
