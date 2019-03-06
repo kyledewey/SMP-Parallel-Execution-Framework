@@ -38,7 +38,7 @@ defaults to the number of cores available.
 The default queue scheduler doesn't provide any guarantees regarding execution
 order. While it is true that file `N` must be selected for processing before
 file `N + 1`, file `N + 1` may end up being processed first depending on how the
-JVM schedules threads. If any guarentees are needed regarding execution order,
+JVM schedules threads. If any guarantees are needed regarding execution order,
 it will be neccessary to implement your own scheduler.
 
 ### Cluser Usage ###
